@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contract_Type__c</fullName>
+    <label>Contract Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>CDI</fullName>
+                <default>false</default>
+                <label>CDI</label>
+            </value>
+            <value>
+                <fullName>CDD</fullName>
+                <default>false</default>
+                <label>CDD</label>
+            </value>
+            <value>
+                <fullName>Stage</fullName>
+                <default>false</default>
+                <label>Stage</label>
+            </value>
+            <value>
+                <fullName>Freelance</fullName>
+                <default>false</default>
+                <label>Freelance</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
