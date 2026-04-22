@@ -1,0 +1,33 @@
+# Salesforce DX
+.sfdx/
+.sf/
+.localdevserver/
+.husky
+
+
+# VS Code
+.vscode/
+
+# Packages
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+
+# Build
+deploy/
+
+# Credentials
+*.key
+*.pem
+server.key
+auth.txt
