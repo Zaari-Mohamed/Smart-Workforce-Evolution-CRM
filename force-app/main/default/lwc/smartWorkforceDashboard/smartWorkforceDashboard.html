@@ -1,0 +1,335 @@
+<template>
+    <div class="dashboard">
+        <div class="bg-grid"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                        <circle cx="22" cy="22" r="22" fill="url(#swGrad)"/>
+                        <path d="M12 18c2.5-4 9.5-4 12 0" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 26c2.5 4 9.5 4 12 0" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="swGrad" x1="0" y1="0" x2="44" y2="44">
+                                <stop offset="0%" stop-color="#1e7ec8"/>
+                                <stop offset="100%" stop-color="#1D9E75"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="title-block">
+                    <h1 class="title">Smart Workforce CRM</h1>
+                    <span class="subtitle">Mission Control RH</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    Live
+                </div>
+                <div class="date">{currentDate}</div>
+                <div class="avatar" title={userName}>{userInitials}</div>
+            </div>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card border-emerald">
+                <div class="kpi-icon emerald">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div class="kpi-info">
+                    <div class="kpi-value">{totalEmployees}</div>
+                    <div class="kpi-label">Employes actifs</div>
+                </div>
+                <div class="kpi-trend up">+{growthHint}%</div>
+            </div>
+
+            <div class="kpi-card border-danger">
+                <div class="kpi-icon danger">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div class="kpi-info">
+                    <div class="kpi-value">{highRiskCount}</div>
+                    <div class="kpi-label">Risque critique</div>
+                </div>
+                <div class="kpi-trend down">Attention</div>
+            </div>
+
+            <div class="kpi-card border-blue">
+                <div class="kpi-icon blue">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+                        <polyline points="16 7 22 7 22 13"/>
+                    </svg>
+                </div>
+                <div class="kpi-info">
+                    <div class="kpi-value">{avgPerformance}%</div>
+                    <div class="kpi-label">Performance moy.</div>
+                </div>
+                <div class="kpi-trend up">+3 pts</div>
+            </div>
+
+            <div class="kpi-card border-warning">
+                <div class="kpi-icon warning">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 8v4l3 3"/>
+                    </svg>
+                </div>
+                <div class="kpi-info">
+                    <div class="kpi-value">{avgTurnoverRisk}%</div>
+                    <div class="kpi-label">Risque turnover</div>
+                </div>
+                <div class="kpi-trend neutral">Stable</div>
+            </div>
+
+            <div class="kpi-card border-violet">
+                <div class="kpi-icon violet">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </div>
+                <div class="kpi-info">
+                    <div class="kpi-value">{avgSkillMatch}%</div>
+                    <div class="kpi-label">Skill Match</div>
+                </div>
+                <div class="kpi-trend up">Bon</div>
+            </div>
+        </section>
+
+        <section class="controls">
+            <div class="search-box">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <lightning-input type="search" placeholder="Rechercher un employe..." onchange={handleSearch} class="search-input"></lightning-input>
+            </div>
+            <div class="filters">
+                <button class={filterAllClass} data-id="filter-all" onclick={filterAllEmployees}>Tous</button>
+                <template for:each={departments} for:item="dept">
+                    <button key={dept.name} class={dept.activeClass} data-id={dept.name} data-dept={dept.name} onclick={filterByDepartment}>{dept.name}</button>
+                </template>
+            </div>
+            <div class="view-toggle">
+                <button class={tableToggleClass} data-id="view-table" onclick={showTable}>Tableau</button>
+                <button class={cardToggleClass} data-id="view-cards" onclick={showCards}>Cartes</button>
+            </div>
+        </section>
+
+        <section class="content-grid">
+            <div class="main-panel">
+                <template if:true={isTableView}>
+                    <div class="table-panel">
+                        <table class="employees-table">
+                            <thead>
+                                <tr>
+                                    <th>Employe</th>
+                                    <th>Poste</th>
+                                    <th>Departement</th>
+                                    <th>Performance</th>
+                                    <th>Turnover Risk</th>
+                                    <th>Skill Match</th>
+                                    <th>Statut</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={displayedEmployees} for:item="emp">
+                                    <tr key={emp.Id} data-id={emp.Id} onclick={viewEmployee}>
+                                        <td>
+                                            <div class="employee-cell">
+                                                <div class={emp.avatarClass}>{emp.initials}</div>
+                                                <div>
+                                                    <div class="employee-name">{emp.Name}</div>
+                                                    <div class="employee-id">{emp.Employee_ID__c}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{emp.Job_Title__c}</td>
+                                        <td><span class="dept-pill">{emp.Department__c}</span></td>
+                                        <td>
+                                            <div class="progress">
+                                                <div class="progress-fill" style={emp.perfStyle}></div>
+                                            </div>
+                                            <span class="progress-value">{emp.Performance_Score__c}%</span>
+                                        </td>
+                                        <td>
+                                            <div class="risk-gauge">
+                                                <svg viewBox="0 0 42 42" class="gauge">
+                                                    <circle class="gauge-bg" cx="21" cy="21" r="16" pathLength="100"></circle>
+                                                    <circle class={emp.riskGaugeClass} cx="21" cy="21" r="16" pathLength="100" style={emp.riskDash}></circle>
+                                                </svg>
+                                                <span class="gauge-value">{emp.Turnover_Risk__c}%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="progress">
+                                                <div class="progress-fill skill" style={emp.skillStyle}></div>
+                                            </div>
+                                            <span class="progress-value">{emp.Skill_Match_Score__c}%</span>
+                                        </td>
+                                        <td><span class={emp.statusClass}>{emp.Status__c}</span></td>
+                                        <td>
+                                            <button class="view-btn" data-id={emp.Id} onclick={viewEmployee}>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                    <circle cx="12" cy="12" r="3"/>
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <template if:true={showEmpty}>
+                            <div class="empty-state">
+                                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
+                                <p>Aucun resultat trouve</p>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <template if:true={isCardView}>
+                    <div class="cards-grid">
+                        <template for:each={displayedEmployees} for:item="emp">
+                            <div key={emp.Id} class="employee-card" data-id={emp.Id} onclick={viewEmployee}>
+                                <div class="card-header">
+                                    <div class={emp.avatarClass}>{emp.initials}</div>
+                                    <div>
+                                        <div class="employee-name">{emp.Name}</div>
+                                        <div class="employee-id">{emp.Job_Title__c}</div>
+                                    </div>
+                                    <span class={emp.statusClass}>{emp.Status__c}</span>
+                                </div>
+                                <div class="card-row">
+                                    <span>Departement</span>
+                                    <strong>{emp.Department__c}</strong>
+                                </div>
+                                <div class="card-metric">
+                                    <span>Performance</span>
+                                    <div class="progress">
+                                        <div class="progress-fill" style={emp.perfStyle}></div>
+                                    </div>
+                                    <span class="progress-value">{emp.Performance_Score__c}%</span>
+                                </div>
+                                <div class="card-metric">
+                                    <span>Turnover</span>
+                                    <div class="progress">
+                                        <div class="progress-fill" style={emp.riskStyle}></div>
+                                    </div>
+                                    <span class="progress-value">{emp.Turnover_Risk__c}%</span>
+                                </div>
+                                <div class="card-metric">
+                                    <span>Skill Match</span>
+                                    <div class="progress">
+                                        <div class="progress-fill skill" style={emp.skillStyle}></div>
+                                    </div>
+                                    <span class="progress-value">{emp.Skill_Match_Score__c}%</span>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:true={showEmpty}>
+                            <div class="empty-state">
+                                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
+                                <p>Aucun resultat trouve</p>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+
+            <aside class="side-panel">
+                <div class="side-card">
+                    <div class="side-title">Repartition par departement</div>
+                    <template for:each={departmentStats} for:item="dept">
+                        <div key={dept.name} class="dept-row">
+                            <div class="dept-label">{dept.name}</div>
+                            <div class="dept-bar">
+                                <div class="dept-fill" style={dept.style}></div>
+                            </div>
+                            <div class="dept-count">{dept.count}</div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="side-card">
+                    <div class="side-title">Distribution risques</div>
+                    <div class="donut">
+                        <svg viewBox="0 0 42 42" class="donut-chart">
+                            <circle class="donut-bg" cx="21" cy="21" r="16" pathLength="100"></circle>
+                            <template for:each={riskSegments} for:item="segment">
+                                <circle key={segment.label} class={segment.className} cx="21" cy="21" r="16" pathLength="100" style={segment.style}></circle>
+                            </template>
+                        </svg>
+                        <div class="donut-legend">
+                            <div class="legend-item">
+                                <span class="dot low"></span>Faible
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot mid"></span>Moyen
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot high"></span>Eleve
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side-card">
+                    <div class="side-title">Alertes critiques</div>
+                    <template for:each={criticalAlerts} for:item="emp">
+                        <div key={emp.Id} class="alert-row">
+                            <div class={emp.avatarClass}>{emp.initials}</div>
+                            <div class="alert-info">
+                                <div class="employee-name">{emp.Name}</div>
+                                <div class="alert-value">{emp.Turnover_Risk__c}% risque</div>
+                            </div>
+                            <button class="alert-btn" data-id={emp.Id} onclick={viewEmployee}>Voir</button>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="side-card">
+                    <div class="side-title">Top 5 performers</div>
+                    <template for:each={topPerformers} for:item="emp">
+                        <div key={emp.Id} class="top-row">
+                            <div class={emp.avatarClass}>{emp.initials}</div>
+                            <div class="alert-info">
+                                <div class="employee-name">{emp.Name}</div>
+                                <div class="alert-value">{emp.Performance_Score__c}% performance</div>
+                            </div>
+                            <button class="alert-btn" data-id={emp.Id} onclick={viewEmployee}>Voir</button>
+                        </div>
+                    </template>
+                </div>
+            </aside>
+        </section>
+
+        <template if:true={isLoading}>
+            <div class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Chargement...</p>
+            </div>
+        </template>
+    </div>
+</template>

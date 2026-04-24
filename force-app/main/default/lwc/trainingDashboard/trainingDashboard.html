@@ -1,0 +1,116 @@
+<template>
+    <div class="training">
+        <div class="bg-grid"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+
+        <header class="training-header">
+            <div>
+                <h2>Training Mission Control</h2>
+                <p>Catalogue et ROI formations</p>
+            </div>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">En cours</div>
+                <div class="kpi-value">{stats.totalInProgress}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Completees</div>
+                <div class="kpi-value">{stats.totalCompleted}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Planifiees</div>
+                <div class="kpi-value">{stats.totalPlanned}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">ROI moyen</div>
+                <div class="kpi-value">{avgRoi}%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Budget consomme</div>
+                <div class="kpi-value">{totalCost}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Completion moyenne</div>
+                <div class="kpi-value">{avgCompletion}%</div>
+            </div>
+        </section>
+
+        <section class="filters">
+            <lightning-combobox
+                label="Statut"
+                value={statusFilter}
+                options={statusOptions}
+                onchange={handleStatusChange}
+                class="combo"
+            ></lightning-combobox>
+            <lightning-combobox
+                label="Type"
+                value={typeFilter}
+                options={typeOptions}
+                onchange={handleTypeChange}
+                class="combo"
+            ></lightning-combobox>
+        </section>
+
+        <section class="table-card">
+            <table class="training-table">
+                <thead>
+                    <tr>
+                        <th>Employe</th>
+                        <th>Formation</th>
+                        <th>Type</th>
+                        <th>Duree</th>
+                        <th>Cout</th>
+                        <th>Completion</th>
+                        <th>ROI</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredTrainings} for:item="training">
+                        <tr key={training.Id}>
+                            <td>{training.Employee__r.Name}</td>
+                            <td>{training.Name}</td>
+                            <td>{training.Training_Type__c}</td>
+                            <td>{training.durationHours}h</td>
+                            <td>{training.Cost__c}</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-fill" style={training.completionStyle}></div>
+                                </div>
+                                <span class="progress-value">{training.Post_Score__c}%</span>
+                            </td>
+                            <td>{training.ROI__c}%</td>
+                            <td><span class="status-pill">{training.Status__c}</span></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="chart-card">
+            <div class="chart-title">ROI par type de formation</div>
+            <div class="bar-chart">
+                <template for:each={roiByType} for:item="item">
+                    <div key={item.type} class="bar-row">
+                        <span class="bar-label">{item.type}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style={item.barStyle}></div>
+                        </div>
+                        <span class="bar-value">{item.roi}%</span>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <template if:true={isLoading}>
+            <div class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Chargement...</p>
+            </div>
+        </template>
+    </div>
+</template>

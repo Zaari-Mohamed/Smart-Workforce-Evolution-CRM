@@ -1,0 +1,66 @@
+<template>
+    <div class="alerts">
+        <div class="bg-grid"></div>
+        <div class="orb orb-1"></div>
+
+        <header class="alerts-header">
+            <div>
+                <h2>Alertes Temps Reel</h2>
+                <p>Total non traitees: {totalAlerts}</p>
+            </div>
+            <div class="pulse-indicator">
+                <span class="pulse-dot"></span>
+                Live
+            </div>
+        </header>
+
+        <section class="alert-group">
+            <div class="group-title critical">CRITIQUE</div>
+            <template for:each={criticalAlerts} for:item="alert">
+                <div key={alert.Id} class="alert-card">
+                    <div class={alert.avatarClass}>{alert.initials}</div>
+                    <div class="alert-info">
+                        <div class="alert-name">{alert.Name}</div>
+                        <div class="alert-reason">Turnover Risk {alert.Turnover_Risk__c}%</div>
+                    </div>
+                    <button class="action-btn" data-id={alert.Id} onclick={markHandled}>Marquer traite</button>
+                </div>
+            </template>
+        </section>
+
+        <section class="alert-group">
+            <div class="group-title warning">ATTENTION</div>
+            <template for:each={warningAlerts} for:item="alert">
+                <div key={alert.Id} class="alert-card">
+                    <div class={alert.avatarClass}>{alert.initials}</div>
+                    <div class="alert-info">
+                        <div class="alert-name">{alert.Name}</div>
+                        <div class="alert-reason">Turnover Risk {alert.Turnover_Risk__c}%</div>
+                    </div>
+                    <button class="action-btn" data-id={alert.Id} onclick={markHandled}>Marquer traite</button>
+                </div>
+            </template>
+        </section>
+
+        <section class="alert-group">
+            <div class="group-title info">INFO</div>
+            <template for:each={infoAlerts} for:item="alert">
+                <div key={alert.Id} class="alert-card">
+                    <div class={alert.avatarClass}>{alert.initials}</div>
+                    <div class="alert-info">
+                        <div class="alert-name">{alert.Name}</div>
+                        <div class="alert-reason">Skill Match {alert.Skill_Match_Score__c}%</div>
+                    </div>
+                    <button class="action-btn" data-id={alert.Id} onclick={markHandled}>Marquer traite</button>
+                </div>
+            </template>
+        </section>
+
+        <template if:true={isLoading}>
+            <div class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Chargement...</p>
+            </div>
+        </template>
+    </div>
+</template>
