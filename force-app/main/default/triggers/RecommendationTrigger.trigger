@@ -15,43 +15,6 @@ trigger RecommendationTrigger on Recommendation__c (after insert) {
          WHERE Id IN :employeeIds]
     );
 
-    // Notification a envoyer 
-    // À activer quand la partie Einstein sera terminée
-    // -------------------------------------------------------
-    /*
-    List<FeedItem> chatterPosts = new List<FeedItem>();
-
-    for (Recommendation__c rec : Trigger.new) {
-        Employe__c emp = employeesMap.get(rec.Employee__c);
-
-        if (emp != null) {
-            FeedItem postEmploye = new FeedItem();
-            postEmploye.ParentId = rec.Employee__c;
-            postEmploye.Body = ' Nouvelle recommandation IA générée pour vous : '
-                + rec.Recommendation_Type__c
-                + ' | Priorité : ' + rec.Priority__c
-                + ' | Confiance IA : ' + rec.AI_Confidence_Score__c + '%'
-                + '\n Consultez votre profil pour plus de détails.';
-            chatterPosts.add(postEmploye);
-
-            if (emp.Manager__c != null) {
-                FeedItem postManager = new FeedItem();
-                postManager.ParentId = emp.Manager__c;
-                postManager.Body = ' Une recommandation IA a été générée pour '
-                    + emp.Name
-                    + ' | Type : ' + rec.Recommendation_Type__c
-                    + ' | Priorité : ' + rec.Priority__c
-                    + '\n Action requise : consultez le profil de votre collaborateur.';
-                chatterPosts.add(postManager);
-            }
-        }
-    }
-
-    if (!chatterPosts.isEmpty()) {
-        insert chatterPosts;
-    }
-    */
-
     /*
     List<AI_Log__c> logs = new List<AI_Log__c>();
 

@@ -254,6 +254,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Skill_Inventory__c.Skill_Score__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Skill_Inventory__c.Target_Level__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -289,6 +294,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Training__c.Skill__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Training__c.Start_Date__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -309,9 +319,6 @@
     </fieldPermissions>
     <layoutAssignments>
         <layout>Employe__c-Employee Layout</layout>
-    </layoutAssignments>
-    <layoutAssignments>
-        <layout>Evaluation__c-Evaluation Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
         <layout>Recommendation__c-Recommendation Layout</layout>
