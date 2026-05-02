@@ -133,6 +133,6 @@
     <textTemplates>
         <name>Reason_text</name>
         <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>&lt;p&gt;Skill score &lt;strong style=&quot;color: rgb(255, 0, 0);&quot;&gt;inférieur à 60%&lt;/strong&gt; - &lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Formation recommandée automatiquement&lt;/span&gt;&lt;/p&gt;</text>
+        <text>Skill score inférieur à 60% - Formation recommandée automatiquement</text>
     </textTemplates>
 </Flow>
