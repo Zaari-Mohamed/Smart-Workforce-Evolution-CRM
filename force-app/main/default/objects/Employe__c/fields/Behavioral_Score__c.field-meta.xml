@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Turnover_Risk__c</fullName>
+    <fullName>Behavioral_Score__c</fullName>
+    <description>Score compétences comportementales (0-100)</description>
     <externalId>false</externalId>
-    <label>Turnover Risk</label>
+    <label>Score comportemental</label>
     <precision>18</precision>
     <required>false</required>
-    <scale>0</scale>
+    <scale>2</scale>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>Percent</type>
+    <type>Number</type>
+    <unique>false</unique>
 </CustomField>
