@@ -46,10 +46,6 @@
                 <behavior>Edit</behavior>
                 <field>Last_Assessed_Date__c</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Skill_Score__c</field>
-            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
