@@ -1,6 +1,6 @@
 import { LightningElement, track, wire } from 'lwc';
-import getCriticalAlerts from '@salesforce/apex/AlertsController.getCriticalAlerts';
-import getSkillAlerts from '@salesforce/apex/AlertsController.getSkillAlerts';
+import getAlerts from '@salesforce/apex/AlertsController.getAlerts';
+import markAlertHandled from '@salesforce/apex/AlertsController.markAlertHandled';
 import { refreshApex } from '@salesforce/apex';
 
 export default class RealTimeAlerts extends LightningElement {
@@ -9,41 +9,21 @@ export default class RealTimeAlerts extends LightningElement {
     @track infoAlerts = [];
     @track isLoading = false;
     @track error = '';
+    @track lastRefresh = '';
 
-    criticalWire;
-    skillWire;
-    refreshTimer;
-
-    @wire(getCriticalAlerts)
-    wiredCritical(result) {
-        this.criticalWire = result;
+    alertsWire;
+    @wire(getAlerts)
+    wiredAlerts(result) {
+        this.alertsWire = result;
         if (result.data) {
-            this.buildCritical(result.data);
-        } else if (result.error) {
-            this.error = 'Erreur de chargement';
-        }
-    }
-
-    @wire(getSkillAlerts)
-    wiredSkills(result) {
-        this.skillWire = result;
-        if (result.data) {
-            this.buildInfo(result.data);
+            this.buildAlerts(result.data);
         } else if (result.error) {
             this.error = 'Erreur de chargement';
         }
     }
 
     connectedCallback() {
-        this.refreshTimer = setInterval(() => {
-            this.refreshAlerts();
-        }, 300000);
-    }
-
-    disconnectedCallback() {
-        if (this.refreshTimer) {
-            clearInterval(this.refreshTimer);
-        }
+        this.updateLastRefresh();
     }
 
     get totalAlerts() {
@@ -52,47 +32,75 @@ export default class RealTimeAlerts extends LightningElement {
 
     refreshAlerts() {
         this.isLoading = true;
-        Promise.all([refreshApex(this.criticalWire), refreshApex(this.skillWire)])
+        Promise.all([refreshApex(this.alertsWire)])
             .finally(() => {
                 this.isLoading = false;
+                this.updateLastRefresh();
             });
     }
 
-    buildCritical(list) {
+    handleManualRefresh() {
+        this.refreshAlerts();
+    }
+
+    buildAlerts(list) {
         const critical = [];
         const warning = [];
-        list.forEach((emp) => {
-            const risk = this.toNumber(emp.Turnover_Risk__c);
-            const mapped = this.mapAlert(emp);
-            if (risk > 75) {
+        const info = [];
+        list.forEach((alertItem) => {
+            const severity = alertItem.Severity__c || 'Info';
+            const mapped = this.mapAlert(alertItem);
+            if (severity === 'Critical') {
                 critical.push(mapped);
-            } else if (risk >= 60) {
+            } else if (severity === 'Important') {
                 warning.push(mapped);
+            } else {
+                info.push(mapped);
             }
         });
+
         this.criticalAlerts = critical;
         this.warningAlerts = warning;
+        this.infoAlerts = info;
     }
 
-    buildInfo(list) {
-        this.infoAlerts = list.map((emp) => this.mapAlert(emp));
+    updateLastRefresh() {
+        this.lastRefresh = new Intl.DateTimeFormat('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(new Date());
     }
 
-    markHandled(event) {
+    async markHandled(event) {
         const recordId = event.currentTarget.dataset.id;
         if (!recordId) {
             return;
         }
-        this.criticalAlerts = this.criticalAlerts.filter((item) => item.Id !== recordId);
-        this.warningAlerts = this.warningAlerts.filter((item) => item.Id !== recordId);
-        this.infoAlerts = this.infoAlerts.filter((item) => item.Id !== recordId);
+
+        this.isLoading = true;
+        this.error = '';
+
+        try {
+            await markAlertHandled({ alertId: recordId });
+            await this.refreshAlerts();
+        } catch (e) {
+            // garde l'UI actuelle, mais affiche une erreur
+            this.error = 'Impossible de marquer comme traité.';
+            console.error(e);
+        } finally {
+            this.isLoading = false;
+        }
     }
 
-    mapAlert(emp) {
+    mapAlert(alertItem) {
         return {
-            ...emp,
-            initials: this.getInitials(emp.Name),
-            avatarClass: `avatar ${this.getDepartmentClass(emp.Department__c)}`
+            ...alertItem,
+            displayName: alertItem.Employee__r?.Name || alertItem.Title__c || 'Alerte',
+            displayTitle: alertItem.Title__c || 'Alerte',
+            employeeTitle: alertItem.Employee__r?.Job_Title__c,
+            employeeDept: alertItem.Employee__r?.Department__c,
+            initials: this.getInitials(alertItem.Employee__r?.Name || alertItem.Title__c),
+            avatarClass: `avatar ${this.getDepartmentClass(alertItem.Employee__r?.Department__c)}`
         };
     }
 
@@ -120,7 +128,4 @@ export default class RealTimeAlerts extends LightningElement {
         return classes[name] || 'dept-it';
     }
 
-    toNumber(value) {
-        return value ? Number(value) : 0;
-    }
 }
