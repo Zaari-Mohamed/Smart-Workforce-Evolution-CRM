@@ -1,0 +1,154 @@
+<apex:page controller="EmployeeReportController" renderAs="pdf" showHeader="false" sidebar="false">
+    <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    color: #0b1f33;
+                    font-size: 12px;
+                }
+                .header {
+                    padding: 10px 0 14px;
+                    border-bottom: 1px solid #cfe0ff;
+                    margin-bottom: 16px;
+                }
+                .title {
+                    font-size: 22px;
+                    font-weight: bold;
+                    color: #0b5fd7;
+                }
+                .subtitle {
+                    color: #5b7285;
+                    margin-top: 4px;
+                }
+                .section-title {
+                    margin: 12px 0 6px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #0b1f33;
+                }
+                .kpis {
+                    width: 100%;
+                    margin-top: 12px;
+                    margin-bottom: 16px;
+                    border-collapse: collapse;
+                }
+                .kpis td {
+                    padding: 8px;
+                    border: 1px solid #d6e2f5;
+                    text-align: center;
+                }
+                .kpis .label {
+                    color: #5b7285;
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.3px;
+                }
+                .kpis .value {
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #0b1f33;
+                }
+                table.report {
+                    width: 100%;
+                    border-collapse: collapse;
+                    border: 1px solid #d6e2f5;
+                }
+                table.report th {
+                    background: #0b5fd7;
+                    color: #ffffff;
+                    text-align: left;
+                    padding: 6px;
+                    font-size: 10px;
+                }
+                table.report td {
+                    padding: 6px;
+                    border-bottom: 1px solid #e3ebf7;
+                    font-size: 10px;
+                }
+                table.report tr:nth-child(even) td {
+                    background: #f5f9ff;
+                }
+                table.report td.num {
+                    text-align: right;
+                }
+                table.report th.num {
+                    text-align: right;
+                }
+                .footer {
+                    margin-top: 12px;
+                    color: #5b7285;
+                    font-size: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="title">Smart Workforce - Rapport des employes</div>
+                <div class="subtitle">Liste complete des employes</div>
+            </div>
+
+            <div class="section-title">Resume</div>
+
+            <table class="kpis">
+                <tr>
+                    <td>
+                        <div class="label">Employes</div>
+                        <div class="value">{!totalEmployees}</div>
+                    </td>
+                    <td>
+                        <div class="label">Risque eleve</div>
+                        <div class="value">{!highRiskCount}</div>
+                    </td>
+                    <td>
+                        <div class="label">Perf. moyenne</div>
+                        <div class="value">{!avgPerformance}%</div>
+                    </td>
+                    <td>
+                        <div class="label">Turnover</div>
+                        <div class="value">{!avgTurnoverRisk}%</div>
+                    </td>
+                    <td>
+                        <div class="label">Skill match</div>
+                        <div class="value">{!avgSkillMatch}%</div>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="report">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>ID</th>
+                        <th>Poste</th>
+                        <th>Departement</th>
+                        <th>Statut</th>
+                        <th>Performance</th>
+                        <th>Turnover</th>
+                        <th>Skill</th>
+                        <th>Contrat</th>
+                        <th>Anciennete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!employees}" var="emp">
+                        <tr>
+                            <td>{!emp.Name}</td>
+                            <td>{!emp.Employee_ID__c}</td>
+                            <td>{!emp.Job_Title__c}</td>
+                            <td>{!emp.Department__c}</td>
+                            <td>{!emp.Status__c}</td>
+                            <td class="num">{!emp.Performance_Score__c}</td>
+                            <td class="num">{!emp.Turnover_Risk__c}</td>
+                            <td class="num">{!emp.Skill_Match_Score__c}</td>
+                            <td>{!emp.Contract_Type__c}</td>
+                            <td>{!emp.Years_at_Company__c}</td>
+                        </tr>
+                    </apex:repeat>
+                </tbody>
+            </table>
+
+            <div class="footer">{!NOW()}</div>
+        </body>
+    </html>
+</apex:page>
