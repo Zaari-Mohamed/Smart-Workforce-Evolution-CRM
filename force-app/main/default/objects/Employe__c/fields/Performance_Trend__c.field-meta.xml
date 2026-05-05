@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Contract_Type__c</fullName>
+    <fullName>Performance_Trend__c</fullName>
+    <description>Tendance de la performance (En hausse, Stable, En baisse)</description>
     <externalId>false</externalId>
-    <label>Contract Type</label>
+    <label>Tendance performance</label>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
@@ -12,24 +13,19 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>CDI</fullName>
+                <fullName>En hausse</fullName>
                 <default>false</default>
-                <label>CDI</label>
+                <label>En hausse</label>
             </value>
             <value>
-                <fullName>CDD</fullName>
+                <fullName>Stable</fullName>
                 <default>false</default>
-                <label>CDD</label>
+                <label>Stable</label>
             </value>
             <value>
-                <fullName>Stage</fullName>
+                <fullName>En baisse</fullName>
                 <default>false</default>
-                <label>Stage</label>
-            </value>
-            <value>
-                <fullName>Freelance</fullName>
-                <default>false</default>
-                <label>Freelance</label>
+                <label>En baisse</label>
             </value>
         </valueSetDefinition>
     </valueSet>

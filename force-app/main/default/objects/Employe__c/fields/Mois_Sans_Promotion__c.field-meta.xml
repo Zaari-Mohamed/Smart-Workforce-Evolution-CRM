@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mois_Sans_Promotion__c</fullName>
+    <description>Nombre de mois depuis la dernière promotion</description>
+    <externalId>false</externalId>
+    <label>Mois sans promotion</label>
+    <required>false</required>
+    <formula>IF(ISBLANK(Last_Promotion_Date__c), 0, FLOOR((TODAY() - Last_Promotion_Date__c) / 30))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <precision>18</precision>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Performance_Score_Composite__c</fullName>
+    <description>Score de performance composite pondéré (Technique 40%, Comportemental 30%, Objectifs 30%)</description>
+    <externalId>false</externalId>
+    <label>Score de performance composite</label>
+    <required>false</required>
+    <formula>(Technical_Score__c * 0.4) + (Behavioral_Score__c * 0.3) + (Objectives_Achievement__c * 0.3 * 100)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <precision>18</precision>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
