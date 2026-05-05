@@ -1,0 +1,218 @@
+<template>
+    <div class="profile">
+        <section class="profile-header">
+            <div class="profile-main">
+                <div class={avatarClass}>{employeeInitials}</div>
+                <div>
+                    <h2 class="employee-name">{employee.Name}</h2>
+                    <div class="employee-role">{employee.Job_Title__c} • {employee.Department__c}</div>
+                    <div class="employee-meta">Entree: {startDate} • Manager: {managerName}</div>
+                    <template if:true={hasEmail}>
+                        <div class="employee-meta">{employee.Email__c}</div>
+                    </template>
+                </div>
+            </div>
+            <div class="profile-status">
+                <span class={statusClass}>{employee.Status__c}</span>
+                <span class="contract-pill">{employee.Contract_Type__c}</span>
+            </div>
+            <div class="risk-score">
+                <div class="risk-label">Turnover Risk</div>
+                <div class="risk-value">{riskValue}%</div>
+            </div>
+        </section>
+
+        <section class="actions">
+            <div class="detail-title actions-title">Actions prioritaires</div>
+            <div class="action-grid">
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Planifier entretien</div>
+                        <p>Organiser un entretien de retention.</p>
+                    </div>
+                    <button class="primary-btn" onclick={handlePlanInterview}>Planifier</button>
+                </div>
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Assigner formation</div>
+                        <p>Creer une formation ciblee.</p>
+                    </div>
+                    <button class="ghost-btn" onclick={handleAssignTraining}>Assigner</button>
+                </div>
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Envoyer message</div>
+                        <p>Contacter l employe rapidement.</p>
+                    </div>
+                    <button class="ghost-btn" onclick={handleSendMessage}>Envoyer</button>
+                </div>
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Signaler risque</div>
+                        <p>Declencher l escalation.</p>
+                    </div>
+                    <button class="danger-btn" onclick={handleFlagRisk}>Signaler</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="gauges">
+            <div class="gauge-card">
+                <div class="gauge-title">Performance</div>
+                <svg class="gauge" viewBox="0 0 42 42">
+                    <circle class="gauge-bg" cx="21" cy="21" r="16" pathLength="100"></circle>
+                    <circle class="gauge-fill blue" cx="21" cy="21" r="16" pathLength="100" style={perfGaugeStyle}></circle>
+                </svg>
+                <div class="gauge-value">{perfValue}%</div>
+            </div>
+            <div class="gauge-card">
+                <div class="gauge-title">Turnover Risk</div>
+                <svg class="gauge" viewBox="0 0 42 42">
+                    <circle class="gauge-bg" cx="21" cy="21" r="16" pathLength="100"></circle>
+                    <circle class={riskGaugeClass} cx="21" cy="21" r="16" pathLength="100" style={riskGaugeStyle}></circle>
+                </svg>
+                <div class="gauge-value">{riskValue}%</div>
+            </div>
+            <div class="gauge-card">
+                <div class="gauge-title">Skill Match</div>
+                <svg class="gauge" viewBox="0 0 42 42">
+                    <circle class="gauge-bg" cx="21" cy="21" r="16" pathLength="100"></circle>
+                    <circle class="gauge-fill violet" cx="21" cy="21" r="16" pathLength="100" style={skillGaugeStyle}></circle>
+                </svg>
+                <div class="gauge-value">{skillValue}%</div>
+            </div>
+            <div class="gauge-card">
+                <div class="gauge-title">Satisfaction</div>
+                <svg class="gauge" viewBox="0 0 42 42">
+                    <circle class="gauge-bg" cx="21" cy="21" r="16" pathLength="100"></circle>
+                    <circle class={satisfactionGaugeClass} cx="21" cy="21" r="16" pathLength="100" style={satisfactionGaugeStyle}></circle>
+                </svg>
+                <div class="gauge-value">{satisfactionValue}%</div>
+            </div>
+        </section>
+
+        <section class="details">
+            <div class="detail-card info-card">
+                <div class="detail-title">Informations detaillees</div>
+                <div class="detail-grid">
+                    <div>
+                        <span>Anciennete</span>
+                        <strong>{employee.Years_at_Company__c} ans</strong>
+                    </div>
+                    <div>
+                        <span>Age</span>
+                        <strong>{employee.Age__c}</strong>
+                    </div>
+                    <div>
+                        <span>Revenu</span>
+                        <strong>{employee.Monthly_Income__c}</strong>
+                    </div>
+                    <div>
+                        <span>Absences</span>
+                        <strong>{employee.Absence_Days_YTD__c} jours</strong>
+                    </div>
+                    <div>
+                        <span>Mobilite interne</span>
+                        <strong>{employee.Internal_Mobility_Requests__c}</strong>
+                    </div>
+                    <div>
+                        <span>Support manager</span>
+                        <strong>{employee.Manager_Support_Score__c}</strong>
+                    </div>
+                    <div>
+                        <span>Work-life balance</span>
+                        <strong>{employee.Work_Life_Balance__c}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-title">Competences</div>
+                <template for:each={skills} for:item="skill">
+                    <div key={skill.Id} class="skill-row">
+                        <div class="skill-info">
+                            <span>{skill.Skill_Name__c}</span>
+                            <span class="skill-meta">{skill.Skill_Category__c}</span>
+                        </div>
+                        <div class="skill-bars">
+                            <div class="skill-bar">
+                                <div class="skill-fill" style={skill.currentStyle}></div>
+                            </div>
+                            <div class="skill-target">{skill.Current_Level__c}/{skill.Target_Level__c}</div>
+                        </div>
+                        <div class="skill-flags">
+                            <span class={skill.criticalClass}>Critique</span>
+                            <span class={skill.trendClass}>{skill.trendLabel}</span>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={skillsEmpty}>
+                    <div class="empty">Aucune competence enregistree</div>
+                </template>
+            </div>
+        </section>
+
+        <section class="detail-card">
+            <div class="detail-title">Evaluations recentes</div>
+            <template for:each={evaluations} for:item="evaluation">
+                <div key={evaluation.Id} class="list-row">
+                    <div>
+                        <div class="list-title">{evaluation.displayType}</div>
+                        <div class="list-meta">{evaluation.formattedDate}</div>
+                    </div>
+                    <div class="list-score">{evaluation.displayScore}</div>
+                    <span class={evaluation.promoClass}>Promotion recommandee</span>
+                </div>
+            </template>
+            <template if:true={evaluationsEmpty}>
+                <div class="empty">Aucune evaluation recente</div>
+            </template>
+        </section>
+
+        <section class="detail-card">
+            <div class="detail-title">Formations recentes</div>
+            <template for:each={trainings} for:item="training">
+                <div key={training.Id} class="list-row">
+                    <div>
+                        <div class="list-title">{training.Name}</div>
+                        <div class="list-meta">{training.Status__c} • ROI {training.ROI__c}</div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-fill" style={training.completionStyle}></div>
+                    </div>
+                    <span class="list-score">{training.Post_Score__c}%</span>
+                </div>
+            </template>
+            <template if:true={trainingsEmpty}>
+                <div class="empty">Aucune formation recente</div>
+            </template>
+        </section>
+
+        <section class="detail-card">
+            <div class="detail-title">Recommandations IA</div>
+            <template for:each={recommendations} for:item="rec">
+                <div key={rec.Id} class="list-row">
+                    <div>
+                        <div class="list-title">{rec.Recommendation_Type__c}</div>
+                        <div class="list-meta">Priorite {rec.Priority__c} • IA {rec.AI_Confidence_Score__c}%</div>
+                    </div>
+                    <div class="actions">
+                        <button class="action-btn" data-id={rec.Id} onclick={acceptRecommendation}>Accepter</button>
+                        <button class="action-btn ghost" data-id={rec.Id} onclick={viewRecommendation}>Voir</button>
+                    </div>
+                </div>
+            </template>
+            <template if:true={recommendationsEmpty}>
+                <div class="empty">Aucune recommandation active</div>
+            </template>
+        </section>
+
+        <template if:true={isLoading}>
+            <div class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Chargement...</p>
+            </div>
+        </template>
+
+    </div>
+</template>

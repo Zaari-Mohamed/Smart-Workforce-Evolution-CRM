@@ -1,0 +1,135 @@
+<template>
+    <div class="training">
+        <header class="training-header">
+            <div>
+                <h2>Training Mission Control</h2>
+                <p>Catalogue, ROI et recommandations prioritaires</p>
+            </div>
+            <div class="header-actions">
+                <button class="primary-btn" onclick={handleCreateTraining}>Nouvelle formation</button>
+            </div>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">HIPAA</div>
+                <div class="kpi-value">{stats.hipaaCount}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">GDPR</div>
+                <div class="kpi-value">{stats.gdprCount}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">PCI</div>
+                <div class="kpi-value">{stats.pciCount}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">COPPA</div>
+                <div class="kpi-value">{stats.coppaCount}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">CCPA</div>
+                <div class="kpi-value">{stats.ccpaCount}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">ROI moyen</div>
+                <div class="kpi-value">{avgRoiLabel}</div>
+            </div>
+        </section>
+
+        <section class="recommendations">
+            <div class="section-title">Recommandees par IA</div>
+            <div class="recommendation-grid">
+                <template for:each={recommendedTrainings} for:item="training">
+                    <div key={training.Id} class="recommend-card">
+                        <div>
+                            <div class="recommend-title">{training.Name}</div>
+                            <div class="recommend-meta">{training.Training_Type__c} • ROI {training.roiLabel}</div>
+                        </div>
+                        <div class="recommend-actions">
+                            <button class="ghost-btn" data-id={training.Id} onclick={handleViewTraining}>Voir</button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <section class="filters">
+            <lightning-combobox
+                label="Statut"
+                value={statusFilter}
+                options={statusOptions}
+                onchange={handleStatusChange}
+                class="combo"
+            ></lightning-combobox>
+            <lightning-combobox
+                label="Type"
+                value={typeFilter}
+                options={typeOptions}
+                onchange={handleTypeChange}
+                class="combo"
+            ></lightning-combobox>
+        </section>
+
+        <section class="training-cards">
+            <template for:each={filteredTrainings} for:item="training">
+                <article key={training.Id} class="training-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">{training.Name}</div>
+                            <div class="card-meta">{training.Training_Type__c} • {training.Employee__r.Name}</div>
+                        </div>
+                        <span class="status-pill">{training.Status__c}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-metric">
+                            <span>Duree</span>
+                            <strong>{training.durationHours}h</strong>
+                        </div>
+                        <div class="card-metric">
+                            <span>Cout</span>
+                            <strong>{training.costLabel}</strong>
+                        </div>
+                        <div class="card-metric">
+                            <span>ROI</span>
+                            <strong>{training.ROI__c}%</strong>
+                        </div>
+                        <div class="card-progress">
+                            <span>Completion</span>
+                            <div class="progress">
+                                <div class="progress-fill" style={training.completionStyle}></div>
+                            </div>
+                            <span class="progress-value">{training.Post_Score__c}%</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="ghost-btn" data-id={training.Id} onclick={handleViewTraining}>Voir</button>
+                    </div>
+                </article>
+            </template>
+        </section>
+
+        <section class="chart-card">
+            <div class="chart-title">ROI par type de formation</div>
+            <div class="bar-chart">
+                <template for:each={roiByType} for:item="item">
+                    <div key={item.type} class="bar-row">
+                        <span class="bar-label">{item.type}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style={item.barStyle}></div>
+                        </div>
+                        <span class="bar-value">{item.roi}%</span>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <template if:true={isLoading}>
+            <div class="loading-overlay">
+                <div class="spinner"></div>
+                <p>Chargement...</p>
+            </div>
+        </template>
+
+    </div>
+</template>
