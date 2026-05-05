@@ -3,6 +3,11 @@ public with sharing class TrainingDashboardController {
         @AuraEnabled public Integer totalInProgress;
         @AuraEnabled public Integer totalCompleted;
         @AuraEnabled public Integer totalPlanned;
+        @AuraEnabled public Integer hipaaCount;
+        @AuraEnabled public Integer gdprCount;
+        @AuraEnabled public Integer pciCount;
+        @AuraEnabled public Integer coppaCount;
+        @AuraEnabled public Integer ccpaCount;
         @AuraEnabled public Decimal avgRoi;
         @AuraEnabled public Decimal totalCost;
         @AuraEnabled public Decimal avgCompletion;
@@ -32,6 +37,11 @@ public with sharing class TrainingDashboardController {
             stats.totalInProgress = 0;
             stats.totalCompleted = 0;
             stats.totalPlanned = 0;
+            stats.hipaaCount = 0;
+            stats.gdprCount = 0;
+            stats.pciCount = 0;
+            stats.coppaCount = 0;
+            stats.ccpaCount = 0;
             stats.avgRoi = 0;
             stats.totalCost = 0;
             stats.avgCompletion = 0;
@@ -45,12 +55,16 @@ public with sharing class TrainingDashboardController {
             for (AggregateResult ar : statusAgg) {
                 String status = (String) ar.get('status');
                 Integer total = (Integer) ar.get('total');
-                if (status == 'In Progress') {
-                    stats.totalInProgress = total;
-                } else if (status == 'Completed') {
-                    stats.totalCompleted = total;
-                } else if (status == 'Planned') {
-                    stats.totalPlanned = total;
+                if (status == 'HIPAA') {
+                    stats.hipaaCount = total;
+                } else if (status == 'GDPR') {
+                    stats.gdprCount = total;
+                } else if (status == 'PCI') {
+                    stats.pciCount = total;
+                } else if (status == 'COPPA') {
+                    stats.coppaCount = total;
+                } else if (status == 'CCPA') {
+                    stats.ccpaCount = total;
                 }
             }
 

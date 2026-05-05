@@ -1,14 +1,15 @@
 public with sharing class AlertsController {
     @AuraEnabled(cacheable=true)
-    public static List<Employe__c> getCriticalAlerts() {
+    public static List<Alert__c> getAlerts() {
         try {
             return [
-                SELECT Id, Name, Employee_ID__c, Department__c,
-                       Job_Title__c, Turnover_Risk__c, Skill_Match_Score__c,
-                       Status__c
-                FROM Employe__c
-                WHERE Turnover_Risk__c > 60
-                ORDER BY Turnover_Risk__c DESC NULLS LAST
+                SELECT Id, Title__c, Message__c, Severity__c, Employee__c,
+                       Employee__r.Name, Employee__r.Employee_ID__c,
+                       Employee__r.Department__c, Employee__r.Job_Title__c,
+                       Created_Date__c, Is_Read__c, Is_Dismissed__c
+                FROM Alert__c
+                WHERE Is_Dismissed__c = false
+                ORDER BY Created_Date__c DESC NULLS LAST
                 LIMIT 500
             ];
         } catch (Exception ex) {
@@ -16,20 +17,20 @@ public with sharing class AlertsController {
         }
     }
 
-    @AuraEnabled(cacheable=true)
-    public static List<Employe__c> getSkillAlerts() {
-        try {
-            return [
-                SELECT Id, Name, Employee_ID__c, Department__c,
-                       Job_Title__c, Turnover_Risk__c, Skill_Match_Score__c,
-                       Status__c
-                FROM Employe__c
-                WHERE Skill_Match_Score__c < 50
-                ORDER BY Skill_Match_Score__c ASC NULLS LAST
-                LIMIT 500
-            ];
-        } catch (Exception ex) {
-            throw new AuraHandledException('Unable to load skill alerts.');
+    @AuraEnabled
+    public static void markAlertHandled(Id alertId) {
+        if (alertId == null) {
+            return;
         }
+        Alert__c alertItem = [
+            SELECT Id, Is_Read__c, Is_Dismissed__c
+            FROM Alert__c
+            WHERE Id = :alertId
+            LIMIT 1
+        ];
+
+        alertItem.Is_Read__c = true;
+        alertItem.Is_Dismissed__c = true;
+        update alertItem;
     }
 }

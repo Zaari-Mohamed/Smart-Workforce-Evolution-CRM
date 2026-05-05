@@ -1,18 +1,24 @@
 <template>
     <div class="alerts">
-        <div class="bg-grid"></div>
-        <div class="orb orb-1"></div>
-
         <header class="alerts-header">
             <div>
                 <h2>Alertes Temps Reel</h2>
-                <p>Total non traitees: {totalAlerts}</p>
+                <p>Total non traitees: {totalAlerts} • Maj: {lastRefresh}</p>
             </div>
-            <div class="pulse-indicator">
-                <span class="pulse-dot"></span>
-                Live
+            <div class="header-actions">
+                <div class="pulse-indicator">
+                    <span class="pulse-dot"></span>
+                    Live
+                </div>
+                <button class="refresh-btn" onclick={handleManualRefresh}>Rafraichir</button>
             </div>
         </header>
+
+        <section class="alerts-summary">
+            <div class="summary-chip critical">Critique: {criticalAlerts.length}</div>
+            <div class="summary-chip warning">Attention: {warningAlerts.length}</div>
+            <div class="summary-chip info">Info: {infoAlerts.length}</div>
+        </section>
 
         <section class="alert-group">
             <div class="group-title critical">CRITIQUE</div>
@@ -20,8 +26,9 @@
                 <div key={alert.Id} class="alert-card">
                     <div class={alert.avatarClass}>{alert.initials}</div>
                     <div class="alert-info">
-                        <div class="alert-name">{alert.Name}</div>
-                        <div class="alert-reason">Turnover Risk {alert.Turnover_Risk__c}%</div>
+                        <div class="alert-name">{alert.displayName}</div>
+                        <div class="alert-reason">{alert.employeeTitle} • {alert.employeeDept}</div>
+                        <div class="alert-reason">{alert.displayTitle}</div>
                     </div>
                     <button class="action-btn" data-id={alert.Id} onclick={markHandled}>Marquer traite</button>
                 </div>
@@ -34,8 +41,9 @@
                 <div key={alert.Id} class="alert-card">
                     <div class={alert.avatarClass}>{alert.initials}</div>
                     <div class="alert-info">
-                        <div class="alert-name">{alert.Name}</div>
-                        <div class="alert-reason">Turnover Risk {alert.Turnover_Risk__c}%</div>
+                        <div class="alert-name">{alert.displayName}</div>
+                        <div class="alert-reason">{alert.employeeTitle} • {alert.employeeDept}</div>
+                        <div class="alert-reason">{alert.displayTitle}</div>
                     </div>
                     <button class="action-btn" data-id={alert.Id} onclick={markHandled}>Marquer traite</button>
                 </div>
@@ -48,8 +56,9 @@
                 <div key={alert.Id} class="alert-card">
                     <div class={alert.avatarClass}>{alert.initials}</div>
                     <div class="alert-info">
-                        <div class="alert-name">{alert.Name}</div>
-                        <div class="alert-reason">Skill Match {alert.Skill_Match_Score__c}%</div>
+                        <div class="alert-name">{alert.displayName}</div>
+                        <div class="alert-reason">{alert.employeeTitle} • {alert.employeeDept}</div>
+                        <div class="alert-reason">{alert.displayTitle}</div>
                     </div>
                     <button class="action-btn" data-id={alert.Id} onclick={markHandled}>Marquer traite</button>
                 </div>
@@ -62,5 +71,6 @@
                 <p>Chargement...</p>
             </div>
         </template>
+
     </div>
 </template>
