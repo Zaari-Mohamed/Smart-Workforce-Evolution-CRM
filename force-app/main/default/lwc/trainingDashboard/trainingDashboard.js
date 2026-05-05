@@ -1,8 +1,9 @@
 import { LightningElement, track, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getAllTrainings from '@salesforce/apex/TrainingDashboardController.getAllTrainings';
 import getTrainingStats from '@salesforce/apex/TrainingDashboardController.getTrainingStats';
 
-export default class TrainingDashboard extends LightningElement {
+export default class TrainingDashboard extends NavigationMixin(LightningElement) {
     @track trainings = [];
     @track stats = {
         totalInProgress: 0,
@@ -25,7 +26,8 @@ export default class TrainingDashboard extends LightningElement {
             this.trainings = data.map((item) => ({
                 ...item,
                 completionStyle: `width: ${this.toNumber(item.Post_Score__c)}%;`,
-                durationHours: this.computeDurationHours(item.Start_Date__c, item.End_Date__c)
+                durationHours: this.computeDurationHours(item.Start_Date__c, item.End_Date__c),
+                costLabel: this.formatCurrency(item.Cost__c)
             }));
             this.error = '';
         } else if (error) {
@@ -72,12 +74,31 @@ export default class TrainingDashboard extends LightningElement {
         return this.roundValue(this.stats.avgRoi);
     }
 
-    get totalCost() {
-        return this.roundValue(this.stats.totalCost);
+    get totalCostLabel() {
+        return this.formatCurrency(this.stats.totalCost);
     }
 
     get avgCompletion() {
         return this.roundValue(this.stats.avgCompletion);
+    }
+
+    get avgRoiLabel() {
+        return `${this.avgRoi}%`;
+    }
+
+    get avgCompletionLabel() {
+        return `${this.avgCompletion}%`;
+    }
+
+    get recommendedTrainings() {
+        return [...this.trainings]
+            .filter((item) => this.toNumber(item.ROI__c) > 0)
+            .sort((a, b) => this.toNumber(b.ROI__c) - this.toNumber(a.ROI__c))
+            .slice(0, 2)
+            .map((item) => ({
+                ...item,
+                roiLabel: `${Math.round(this.toNumber(item.ROI__c))}%`
+            }));
     }
 
     get roiByType() {
@@ -107,6 +128,30 @@ export default class TrainingDashboard extends LightningElement {
         this.typeFilter = event.detail.value;
     }
 
+    handleCreateTraining() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'Training__c',
+                actionName: 'new'
+            }
+        });
+    }
+
+    handleViewTraining(event) {
+        const recordId = event.currentTarget.dataset.id;
+        if (!recordId) {
+            return;
+        }
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId,
+                actionName: 'view'
+            }
+        });
+    }
+
     computeDurationHours(startValue, endValue) {
         if (!startValue || !endValue) {
             return '';
@@ -124,5 +169,14 @@ export default class TrainingDashboard extends LightningElement {
 
     toNumber(value) {
         return value ? Number(value) : 0;
+    }
+
+    formatCurrency(value) {
+        const numeric = value ? Number(value) : 0;
+        return new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: 'EUR',
+            maximumFractionDigits: 0
+        }).format(numeric);
     }
 }

@@ -1,40 +1,56 @@
 <template>
     <div class="training">
-        <div class="bg-grid"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-
         <header class="training-header">
             <div>
                 <h2>Training Mission Control</h2>
-                <p>Catalogue et ROI formations</p>
+                <p>Catalogue, ROI et recommandations prioritaires</p>
+            </div>
+            <div class="header-actions">
+                <button class="primary-btn" onclick={handleCreateTraining}>Nouvelle formation</button>
             </div>
         </header>
 
         <section class="kpi-grid">
             <div class="kpi-card">
-                <div class="kpi-label">En cours</div>
-                <div class="kpi-value">{stats.totalInProgress}</div>
+                <div class="kpi-label">HIPAA</div>
+                <div class="kpi-value">{stats.hipaaCount}</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">Completees</div>
-                <div class="kpi-value">{stats.totalCompleted}</div>
+                <div class="kpi-label">GDPR</div>
+                <div class="kpi-value">{stats.gdprCount}</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">Planifiees</div>
-                <div class="kpi-value">{stats.totalPlanned}</div>
+                <div class="kpi-label">PCI</div>
+                <div class="kpi-value">{stats.pciCount}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">COPPA</div>
+                <div class="kpi-value">{stats.coppaCount}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">CCPA</div>
+                <div class="kpi-value">{stats.ccpaCount}</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">ROI moyen</div>
-                <div class="kpi-value">{avgRoi}%</div>
+                <div class="kpi-value">{avgRoiLabel}</div>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Budget consomme</div>
-                <div class="kpi-value">{totalCost}</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Completion moyenne</div>
-                <div class="kpi-value">{avgCompletion}%</div>
+        </section>
+
+        <section class="recommendations">
+            <div class="section-title">Recommandees par IA</div>
+            <div class="recommendation-grid">
+                <template for:each={recommendedTrainings} for:item="training">
+                    <div key={training.Id} class="recommend-card">
+                        <div>
+                            <div class="recommend-title">{training.Name}</div>
+                            <div class="recommend-meta">{training.Training_Type__c} • ROI {training.roiLabel}</div>
+                        </div>
+                        <div class="recommend-actions">
+                            <button class="ghost-btn" data-id={training.Id} onclick={handleViewTraining}>Voir</button>
+                        </div>
+                    </div>
+                </template>
             </div>
         </section>
 
@@ -55,40 +71,42 @@
             ></lightning-combobox>
         </section>
 
-        <section class="table-card">
-            <table class="training-table">
-                <thead>
-                    <tr>
-                        <th>Employe</th>
-                        <th>Formation</th>
-                        <th>Type</th>
-                        <th>Duree</th>
-                        <th>Cout</th>
-                        <th>Completion</th>
-                        <th>ROI</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template for:each={filteredTrainings} for:item="training">
-                        <tr key={training.Id}>
-                            <td>{training.Employee__r.Name}</td>
-                            <td>{training.Name}</td>
-                            <td>{training.Training_Type__c}</td>
-                            <td>{training.durationHours}h</td>
-                            <td>{training.Cost__c}</td>
-                            <td>
-                                <div class="progress">
-                                    <div class="progress-fill" style={training.completionStyle}></div>
-                                </div>
-                                <span class="progress-value">{training.Post_Score__c}%</span>
-                            </td>
-                            <td>{training.ROI__c}%</td>
-                            <td><span class="status-pill">{training.Status__c}</span></td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
+        <section class="training-cards">
+            <template for:each={filteredTrainings} for:item="training">
+                <article key={training.Id} class="training-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">{training.Name}</div>
+                            <div class="card-meta">{training.Training_Type__c} • {training.Employee__r.Name}</div>
+                        </div>
+                        <span class="status-pill">{training.Status__c}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-metric">
+                            <span>Duree</span>
+                            <strong>{training.durationHours}h</strong>
+                        </div>
+                        <div class="card-metric">
+                            <span>Cout</span>
+                            <strong>{training.costLabel}</strong>
+                        </div>
+                        <div class="card-metric">
+                            <span>ROI</span>
+                            <strong>{training.ROI__c}%</strong>
+                        </div>
+                        <div class="card-progress">
+                            <span>Completion</span>
+                            <div class="progress">
+                                <div class="progress-fill" style={training.completionStyle}></div>
+                            </div>
+                            <span class="progress-value">{training.Post_Score__c}%</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="ghost-btn" data-id={training.Id} onclick={handleViewTraining}>Voir</button>
+                    </div>
+                </article>
+            </template>
         </section>
 
         <section class="chart-card">
@@ -112,5 +130,6 @@
                 <p>Chargement...</p>
             </div>
         </template>
+
     </div>
 </template>

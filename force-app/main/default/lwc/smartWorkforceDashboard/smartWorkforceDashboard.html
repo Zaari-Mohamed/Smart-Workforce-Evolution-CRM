@@ -1,23 +1,12 @@
 <template>
     <div class="dashboard">
-        <div class="bg-grid"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-
         <header class="header">
             <div class="header-left">
                 <div class="logo">
                     <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                        <circle cx="22" cy="22" r="22" fill="url(#swGrad)"/>
+                        <circle cx="22" cy="22" r="22" fill="#0f4c81"/>
                         <path d="M12 18c2.5-4 9.5-4 12 0" stroke="white" stroke-width="2" stroke-linecap="round"/>
                         <path d="M12 26c2.5 4 9.5 4 12 0" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                        <defs>
-                            <linearGradient id="swGrad" x1="0" y1="0" x2="44" y2="44">
-                                <stop offset="0%" stop-color="#1e7ec8"/>
-                                <stop offset="100%" stop-color="#1D9E75"/>
-                            </linearGradient>
-                        </defs>
                     </svg>
                 </div>
                 <div class="title-block">
@@ -30,10 +19,29 @@
                     <span class="live-dot"></span>
                     Live
                 </div>
-                <div class="date">{currentDate}</div>
+                <div class="date">{currentDate} • Maj {lastRefresh}</div>
                 <div class="avatar" title={userName}>{userInitials}</div>
             </div>
         </header>
+
+        <section class="hero">
+            <div class="hero-card">
+                <div>
+                    <div class="hero-title">Bienvenue {userName}</div>
+                    <div class="hero-sub">Mission RH • {totalEmployees} employes actifs • {departments.length} departements</div>
+                    <div class="hero-badges">
+                        <span class="badge-pill">Risque critique: {highRiskCount}</span>
+                        <span class="badge-pill ghost">Perf. moyenne: {avgPerformance}%</span>
+                        <span class="badge-pill ghost">Skill match: {avgSkillMatch}%</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="primary-btn" onclick={handleFocusSummary}>Voir dashboard</button>
+                    <button class="ghost-btn" onclick={handleExport}>Exporter rapport</button>
+                    <button class="ghost-btn" onclick={handleRefresh}>Rafraichir</button>
+                </div>
+            </div>
+        </section>
 
         <section class="kpi-grid">
             <div class="kpi-card border-emerald">
@@ -106,6 +114,21 @@
                     <div class="kpi-label">Skill Match</div>
                 </div>
                 <div class="kpi-trend up">Bon</div>
+            </div>
+        </section>
+
+        <section class="risk-signals">
+            <div class="section-title">Estimation du risque de turnover</div>
+            <div class="signal-grid">
+                <template for:each={riskSignals} for:item="signal">
+                    <div key={signal.label} class="signal-card">
+                        <div class="signal-title">{signal.label}</div>
+                        <div class="signal-bar">
+                            <div class={signal.levelClass} style={signal.style}></div>
+                        </div>
+                        <div class="signal-value">{signal.value}%</div>
+                    </div>
+                </template>
             </div>
         </section>
 
@@ -331,5 +354,6 @@
                 <p>Chargement...</p>
             </div>
         </template>
+
     </div>
 </template>

@@ -15,7 +15,7 @@ public with sharing class EmployeeProfileController {
                        Training_Count__c, Absence_Days_YTD__c,
                        Internal_Mobility_Requests__c, Manager_Support_Score__c,
                        Turnover_Risk__c, Skill_Match_Score__c, Departed__c,
-                       Manager__c
+                       Manager__c, Manager__r.Name
                 FROM Employe__c
                 WHERE Id = :employeeId
                 LIMIT 1

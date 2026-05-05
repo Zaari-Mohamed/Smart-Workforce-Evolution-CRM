@@ -1,16 +1,15 @@
 <template>
     <div class="profile">
-        <div class="bg-grid"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-
-        <section class="profile-header" style={headerStyle}>
+        <section class="profile-header">
             <div class="profile-main">
                 <div class={avatarClass}>{employeeInitials}</div>
                 <div>
                     <h2 class="employee-name">{employee.Name}</h2>
                     <div class="employee-role">{employee.Job_Title__c} • {employee.Department__c}</div>
-                    <div class="employee-meta">Entree: {startDate}</div>
+                    <div class="employee-meta">Entree: {startDate} • Manager: {managerName}</div>
+                    <template if:true={hasEmail}>
+                        <div class="employee-meta">{employee.Email__c}</div>
+                    </template>
                 </div>
             </div>
             <div class="profile-status">
@@ -20,6 +19,40 @@
             <div class="risk-score">
                 <div class="risk-label">Turnover Risk</div>
                 <div class="risk-value">{riskValue}%</div>
+            </div>
+        </section>
+
+        <section class="actions">
+            <div class="detail-title actions-title">Actions prioritaires</div>
+            <div class="action-grid">
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Planifier entretien</div>
+                        <p>Organiser un entretien de retention.</p>
+                    </div>
+                    <button class="primary-btn" onclick={handlePlanInterview}>Planifier</button>
+                </div>
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Assigner formation</div>
+                        <p>Creer une formation ciblee.</p>
+                    </div>
+                    <button class="ghost-btn" onclick={handleAssignTraining}>Assigner</button>
+                </div>
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Envoyer message</div>
+                        <p>Contacter l employe rapidement.</p>
+                    </div>
+                    <button class="ghost-btn" onclick={handleSendMessage}>Envoyer</button>
+                </div>
+                <div class="action-tile">
+                    <div class="action-copy">
+                        <div class="action-title">Signaler risque</div>
+                        <p>Declencher l escalation.</p>
+                    </div>
+                    <button class="danger-btn" onclick={handleFlagRisk}>Signaler</button>
+                </div>
             </div>
         </section>
 
@@ -59,7 +92,7 @@
         </section>
 
         <section class="details">
-            <div class="detail-card">
+            <div class="detail-card info-card">
                 <div class="detail-title">Informations detaillees</div>
                 <div class="detail-grid">
                     <div>
@@ -180,5 +213,6 @@
                 <p>Chargement...</p>
             </div>
         </template>
+
     </div>
 </template>

@@ -1,5 +1,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import getEmployeeDetails from '@salesforce/apex/EmployeeProfileController.getEmployeeDetails';
 import getEmployeeSkills from '@salesforce/apex/EmployeeProfileController.getEmployeeSkills';
 import getEmployeeEvaluations from '@salesforce/apex/EmployeeProfileController.getEmployeeEvaluations';
@@ -123,6 +125,14 @@ export default class EmployeeProfileCard extends NavigationMixin(LightningElemen
         return this.formatDate(this.employee.Start_Date__c);
     }
 
+    get managerName() {
+        return this.employee.Manager__r?.Name || 'Non assigne';
+    }
+
+    get hasEmail() {
+        return Boolean(this.employee.Email__c);
+    }
+
     get riskValue() {
         return this.toNumber(this.employee.Turnover_Risk__c);
     }
@@ -139,9 +149,6 @@ export default class EmployeeProfileCard extends NavigationMixin(LightningElemen
         return this.toNumber(this.employee.Job_Satisfaction__c);
     }
 
-    get headerStyle() {
-        return `background: ${this.getRiskGradient(this.riskValue)};`;
-    }
 
     get perfGaugeStyle() {
         return `stroke-dasharray: ${this.perfValue} 100;`;
@@ -242,6 +249,63 @@ export default class EmployeeProfileCard extends NavigationMixin(LightningElemen
         });
     }
 
+    handlePlanInterview() {
+        const defaults = encodeDefaultFieldValues({
+            WhatId: this.recordId,
+            Subject: 'Entretien de retention'
+        });
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'Task',
+                actionName: 'new'
+            },
+            state: {
+                defaultFieldValues: defaults
+            }
+        });
+    }
+
+    handleAssignTraining() {
+        const defaults = encodeDefaultFieldValues({
+            Employee__c: this.recordId
+        });
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: 'Training__c',
+                actionName: 'new'
+            },
+            state: {
+                defaultFieldValues: defaults
+            }
+        });
+    }
+
+    handleSendMessage() {
+        if (!this.employee.Email__c) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Email manquant',
+                    message: 'Aucune adresse email disponible pour cet employe.',
+                    variant: 'warning'
+                })
+            );
+            return;
+        }
+        window.location.href = `mailto:${this.employee.Email__c}`;
+    }
+
+    handleFlagRisk() {
+        this.dispatchEvent(
+            new ShowToastEvent({
+                title: 'Risque signale',
+                message: 'Flux d escalation a configurer pour cet employe.',
+                variant: 'info'
+            })
+        );
+    }
+
     formatDate(value) {
         if (!value) {
             return '';
@@ -303,15 +367,6 @@ export default class EmployeeProfileCard extends NavigationMixin(LightningElemen
         return 'Stable';
     }
 
-    getRiskGradient(value) {
-        if (value > 60) {
-            return 'linear-gradient(135deg, rgba(239,68,68,0.3), rgba(13,30,46,0.9))';
-        }
-        if (value > 40) {
-            return 'linear-gradient(135deg, rgba(245,158,11,0.3), rgba(13,30,46,0.9))';
-        }
-        return 'linear-gradient(135deg, rgba(29,158,117,0.3), rgba(13,30,46,0.9))';
-    }
 
     toNumber(value) {
         return value ? Number(value) : 0;

@@ -4,6 +4,7 @@ import { getRecord } from 'lightning/uiRecordApi';
 import USER_ID from '@salesforce/user/Id';
 import USER_NAME_FIELD from '@salesforce/schema/User.Name';
 import getEmployees from '@salesforce/apex/EmployeeDashboardController.getEmployees';
+import { refreshApex } from '@salesforce/apex';
 
 export default class SmartWorkforceDashboard extends NavigationMixin(LightningElement) {
     @track displayedEmployees = [];
@@ -13,6 +14,7 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
     @track criticalAlerts = [];
     @track topPerformers = [];
     @track riskSegments = [];
+    @track riskSignals = [];
     @track isLoading = false;
     @track error = '';
     @track showEmpty = false;
@@ -25,12 +27,14 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
 
     @track currentDate = '';
     @track userInitials = '';
+    @track lastRefresh = '';
     userName = '';
 
     searchTerm = '';
     selectedDept = '';
     viewMode = 'table';
     growthHint = 12;
+    employeesWireResult;
 
     connectedCallback() {
         this.currentDate = new Intl.DateTimeFormat('fr-FR', {
@@ -52,6 +56,7 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
 
     @wire(getEmployees)
     wiredEmployees({ data, error }) {
+        this.employeesWireResult = { data, error };
         this.isLoading = true;
         if (data) {
             this.prepareEmployees(data);
@@ -61,6 +66,7 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
             this.allEmployees = [];
             this.displayedEmployees = [];
         }
+        this.updateLastRefresh();
         this.isLoading = false;
     }
 
@@ -86,8 +92,6 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
 
     prepareEmployees(employees) {
         const deptCount = {};
-        const alerts = [];
-        const performers = [];
 
         this.allEmployees = employees.map((emp) => {
             const perfScore = this.toNumber(emp.Performance_Score__c);
@@ -144,6 +148,7 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
             .slice(0, 5);
 
         this.computeRiskSegments();
+        this.computeRiskSignals();
         this.filterEmployees();
     }
 
@@ -194,6 +199,33 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
         }
         this.displayedEmployees = filtered;
         this.showEmpty = filtered.length === 0;
+    }
+
+    handleRefresh() {
+        if (!this.employeesWireResult) {
+            return;
+        }
+        this.isLoading = true;
+        refreshApex(this.employeesWireResult)
+            .finally(() => {
+                this.isLoading = false;
+                this.updateLastRefresh();
+            });
+    }
+
+    handleFocusSummary() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    handleExport() {
+        window.open('/apex/EmployeeReport', '_blank');
+    }
+
+    updateLastRefresh() {
+        this.lastRefresh = new Intl.DateTimeFormat('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(new Date());
     }
 
     handleSearch(event) {
@@ -304,6 +336,59 @@ export default class SmartWorkforceDashboard extends NavigationMixin(LightningEl
             Operations: 'dept-ops'
         };
         return classes[name] || 'dept-it';
+    }
+
+    computeRiskSignals() {
+        const satisfaction = this.avgNormalizedScore(this.allEmployees, 'Job_Satisfaction__c', 10);
+        const balance = this.avgNormalizedScore(this.allEmployees, 'Work_Life_Balance__c', 10);
+        const support = this.avgNormalizedScore(this.allEmployees, 'Manager_Support_Score__c', 10);
+        const skillMatch = this.avgNormalizedScore(this.allEmployees, 'Skill_Match_Score__c', 100);
+
+        const signals = [
+            this.buildRiskSignal('Overview', this.avgTurnoverRisk),
+            this.buildRiskSignal('Satisfaction', this.scoreToRisk(satisfaction)),
+            this.buildRiskSignal('Equilibre', this.scoreToRisk(balance)),
+            this.buildRiskSignal('Support', this.scoreToRisk(support)),
+            this.buildRiskSignal('Skills', this.scoreToRisk(skillMatch))
+        ];
+        this.riskSignals = signals;
+    }
+
+    buildRiskSignal(label, value) {
+        const bounded = this.clamp(value, 0, 100);
+        return {
+            label,
+            value: bounded,
+            levelClass: this.getSignalClass(bounded),
+            style: `width: ${bounded}%;`
+        };
+    }
+
+    getSignalClass(value) {
+        if (value > 60) {
+            return 'signal-fill danger';
+        }
+        if (value > 40) {
+            return 'signal-fill warning';
+        }
+        return 'signal-fill safe';
+    }
+
+    avgNormalizedScore(list, field, maxValue) {
+        if (!list || list.length === 0) {
+            return 0;
+        }
+        const sum = list.reduce((total, item) => total + this.toNumber(item[field]), 0);
+        const avg = sum / list.length;
+        return Math.round((avg / maxValue) * 100);
+    }
+
+    scoreToRisk(normalizedScore) {
+        return 100 - this.clamp(normalizedScore, 0, 100);
+    }
+
+    clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
     }
 
     roundAvg(list, field) {
