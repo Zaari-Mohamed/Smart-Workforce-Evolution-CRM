@@ -38,8 +38,8 @@ trigger EmployeeTrigger on Employe__c (before insert, before update, after updat
         }
 
         //A faire: décommenter quand EmployeeScoreCalculator sera créé
-        //if (!employeesARecalculer.isEmpty()) {
-        //    EmployeeScoreCalculator.mettreAJourRecommandations(employeesARecalculer);
-        //}
+        if (!employeesARecalculer.isEmpty()) {
+            EmployeeScoreCalculator.mettreAJourRecommandations(employeesARecalculer);
+        }
     }
 }

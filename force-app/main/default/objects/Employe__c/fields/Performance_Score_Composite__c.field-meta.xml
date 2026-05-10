@@ -3,11 +3,11 @@
     <fullName>Performance_Score_Composite__c</fullName>
     <description>Score de performance composite pondéré (Technique 40%, Comportemental 30%, Objectifs 30%)</description>
     <externalId>false</externalId>
-    <label>Score de performance composite</label>
-    <required>false</required>
     <formula>(Technical_Score__c * 0.4) + (Behavioral_Score__c * 0.3) + (Objectives_Achievement__c * 0.3 * 100)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Score de performance composite</label>
     <precision>18</precision>
+    <required>false</required>
     <scale>2</scale>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

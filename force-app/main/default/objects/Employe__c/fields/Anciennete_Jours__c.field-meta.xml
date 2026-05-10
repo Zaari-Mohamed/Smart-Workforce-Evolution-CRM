@@ -3,11 +3,11 @@
     <fullName>Anciennete_Jours__c</fullName>
     <description>Nombre de jours depuis la date d&apos;embauche</description>
     <externalId>false</externalId>
-    <label>Ancienneté (jours)</label>
-    <required>false</required>
     <formula>TODAY() - Start_Date__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Ancienneté (jours)</label>
     <precision>18</precision>
+    <required>false</required>
     <scale>0</scale>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

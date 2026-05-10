@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Objectives_Achievement__c</fullName>
     <description>Taux d&apos;atteinte des objectifs (en pourcentage)</description>
-    <externalId>false</externalId>
     <label>Taux atteinte objectifs</label>
     <precision>18</precision>
     <required>false</required>
