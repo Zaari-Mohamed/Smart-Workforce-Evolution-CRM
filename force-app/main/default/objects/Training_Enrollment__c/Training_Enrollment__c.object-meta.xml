@@ -155,9 +155,8 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>Training Enrollment</label>
     <nameField>
-        <displayFormat>ENR-{0000}</displayFormat>
         <label>Training Enrollment Name</label>
-        <type>AutoNumber</type>
+        <type>Text</type>
     </nameField>
     <pluralLabel>Training Enrollments</pluralLabel>
     <searchLayouts></searchLayouts>

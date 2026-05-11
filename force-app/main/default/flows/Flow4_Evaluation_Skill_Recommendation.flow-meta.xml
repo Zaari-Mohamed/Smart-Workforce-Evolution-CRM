@@ -19,12 +19,17 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Creer_Recommendation</targetReference>
+                <targetReference>Recuperer_Employe</targetReference>
             </connector>
             <label>oui</label>
         </rules>
     </decisions>
     <environments>Default</environments>
+    <formulas>
+        <name>ExpirationDate</name>
+        <dataType>Date</dataType>
+        <expression>TODAY() + 30</expression>
+    </formulas>
     <interviewLabel>Flow4: Evaluation Skill Recommendation {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Flow4: Evaluation Skill Recommendation</label>
     <processMetadataValues>
@@ -58,6 +63,18 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>Expiration_Date__c</field>
+            <value>
+                <elementReference>ExpirationDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Name</field>
+            <value>
+                <stringValue>Recommendation de {!$Record.Skill_Name__c} pour {!Recuperer_Employe.Name}</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>Priority__c</field>
             <value>
                 <stringValue>High</stringValue>
@@ -66,7 +83,7 @@
         <inputAssignments>
             <field>Reason__c</field>
             <value>
-                <elementReference>Reason_text</elementReference>
+                <stringValue>Skill score inférieur à 60% - Formation recommandée automatiquement</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -90,6 +107,27 @@
         <object>Recommendation__c</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
+    <recordLookups>
+        <name>Recuperer_Employe</name>
+        <label>Récupérer Employé</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Creer_Recommendation</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Employee__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Employe__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
     <recordLookups>
         <name>Recuperer_Formation_Liee</name>
         <label>Récupérer Formation Liée</label>

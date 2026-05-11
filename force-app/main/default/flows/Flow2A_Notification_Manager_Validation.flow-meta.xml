@@ -50,15 +50,9 @@
         </inputParameters>
         <inputParameters>
             <name>recipientId</name>
-            <value>
-                <elementReference>Recuperer_Manager.Id</elementReference>
-            </value>
         </inputParameters>
         <inputParameters>
             <name>relatedRecordId</name>
-        </inputParameters>
-        <inputParameters>
-            <name>logEmailOnSend</name>
         </inputParameters>
         <nameSegment>emailSimple</nameSegment>
         <offset>0</offset>

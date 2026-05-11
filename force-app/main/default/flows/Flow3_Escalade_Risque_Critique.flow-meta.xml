@@ -42,7 +42,7 @@
             <name>emailBody</name>
             <value>
                 <inputConfiguratorMode>Custom</inputConfiguratorMode>
-                <stringValue>&lt;p&gt;L&apos;employé présente un risque de départ élevé. Une action immédiate est requise.&lt;/p&gt;</stringValue>
+                <stringValue>&lt;p&gt;L&apos;employé {!$Record.Name} présente un risque de départ de {!$Record.Turnover_Risk__c}%. Une action immédiate est requise.&lt;/p&gt;</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -67,8 +67,18 @@
     </actionCalls>
     <apiVersion>66.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
-    <description>Flux d&apos;escalade automatique déclenché lorsque le risque de départ d&apos;un employé (Turn Over Risk) dépasse 75%. Crée une tâche urgente pour le manager, envoie une alerte email à la DRH et ouvre un dossier RH officiel pour suivi.</description>
+    <description>Flux d&apos;escalade automatique déclenché lorsque le risque de départ d&apos;un employé (Turn Over Risk) dépasse 75%. Crée une tâche urgente pour le manager, envoie une alerte email à la DRH et ouvre un dossier (case) RH officiel pour suivi.</description>
     <environments>Default</environments>
+    <formulas>
+        <name>EndEntretien</name>
+        <dataType>DateTime</dataType>
+        <expression>{!$Flow.CurrentDateTime} + 2 + (2/24)</expression>
+    </formulas>
+    <formulas>
+        <name>StartEntretien</name>
+        <dataType>DateTime</dataType>
+        <expression>{!$Flow.CurrentDateTime} + 2</expression>
+    </formulas>
     <interviewLabel>Flow3 Escalade Risque Critique {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Flow3 Escalade Risque Critique</label>
     <processMetadataValues>
@@ -194,7 +204,7 @@ Un Case dans Salesforce c&apos;est comme un ticket de support</description>
         <inputAssignments>
             <field>StartDateTime</field>
             <value>
-                <elementReference>$Flow.CurrentDateTime</elementReference>
+                <elementReference>StartEntretien</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>

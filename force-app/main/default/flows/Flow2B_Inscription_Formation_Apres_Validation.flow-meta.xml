@@ -112,6 +112,12 @@
             </value>
         </inputAssignments>
         <inputAssignments>
+            <field>Name</field>
+            <value>
+                <stringValue>Inscription de {!Recuperer_Employe.Name} dans la formation {!$Record.Training__r.Name}</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>Start_Date__c</field>
             <value>
                 <elementReference>$Flow.CurrentDate</elementReference>
@@ -164,7 +170,7 @@
         <inputAssignments>
             <field>Subject</field>
             <value>
-                <elementReference>SubjectSuivi</elementReference>
+                <stringValue>Suivi formation employé</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>

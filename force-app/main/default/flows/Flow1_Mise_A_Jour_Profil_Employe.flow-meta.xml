@@ -40,7 +40,7 @@
             <name>emailBody</name>
             <value>
                 <inputConfiguratorMode>Custom</inputConfiguratorMode>
-                <stringValue>&lt;p&gt;onjour, votre collaborateur présente un risque de départ de {!$Record.Turnover_Risk__c}%. Une action est recommandée.&lt;/p&gt;</stringValue>
+                <stringValue>&lt;p&gt;Bonjour, votre collaborateur présente un risque de départ de {!$Record.Turnover_Risk__c}%. Une action est recommandée.&lt;/p&gt;</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -70,7 +70,7 @@
         <actionName>emailSimple</actionName>
         <actionType>emailSimple</actionType>
         <connector>
-            <targetReference>Recuperer_Skills_Employe</targetReference>
+            <targetReference>Creer_Tache_Completer_Profil</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
@@ -199,13 +199,13 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Recuperer_Skills_Employe</targetReference>
+                <targetReference>Mettre_jour_Anciennet</targetReference>
             </connector>
             <label>Complet</label>
         </rules>
     </decisions>
     <decisions>
-        <name>Risque_under_60</name>
+        <name>Risque_over_60</name>
         <label>Risque &gt; 60% ?</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
@@ -226,7 +226,10 @@
             <label>Oui</label>
         </rules>
     </decisions>
-    <description>Calcule et met à jour automatiquement le Skill Match Score de l&apos;employé à chaque modification de son profil</description>
+    <description>• Verifier la completude du profil (envoie de mail et creation d&apos;une tache de completude si imcomplet)
+• Calculer l&apos;anciennete en jours depuis Start_Date__c
+• Mettre a jour le champ Skill_Match_Score__c en comparant Current_Level__c vs Target_Level__c
+• Envoyer une alerte au manager si le score de risque depasse 60%</description>
     <environments>Default</environments>
     <formulas>
         <name>AncienneteJours</name>
@@ -282,6 +285,53 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Creer_Tache_Completer_Profil</name>
+        <label>Créer Tâche Compléter Profil</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Mettre_jour_Anciennet</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>Normal</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>Compléter le profil employé</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
     <recordLookups>
         <name>Recuperer_Skills_Employe</name>
         <label>Récupérer Skills Employé</label>
@@ -309,7 +359,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Mettre_jour_Anciennete</targetReference>
+            <targetReference>Risque_over_60</targetReference>
         </connector>
         <inputAssignments>
             <field>Skill_Match_Score__c</field>
@@ -320,12 +370,12 @@
         <inputReference>$Record</inputReference>
     </recordUpdates>
     <recordUpdates>
-        <name>Mettre_jour_Anciennete</name>
+        <name>Mettre_jour_Anciennet</name>
         <label>Mettre à jour Ancienneté</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Risque_under_60</targetReference>
+            <targetReference>Recuperer_Skills_Employe</targetReference>
         </connector>
         <inputAssignments>
             <field>Tenure_Months__c</field>
